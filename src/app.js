@@ -1,9 +1,11 @@
 import {Question} from './question'
-import {isValid} from './utils'
+import {isValid, createModal} from './utils'
+import {getAuthForm} from './auth'
 import './styles.css'
 
 // *** Константы
 const form = document.querySelector('#question-form');
+const modalBtn = document.querySelector('#modal-btn');
 const input = form.querySelector('#question-input');
 const submitBtn = form.querySelector('#question-submit');
 
@@ -34,6 +36,28 @@ const submitFormHandler = e => {
     }
 }
 
+// открытие формы авторизации
+const openModal = () => {
+    createModal('Авторизация', getAuthForm());
+
+    document
+        .getElementById('auth-form')
+        .addEventListener('submit', authFormHandler, {once: true});
+}
+
+// убираем перезагрузку страницы после авторизации
+// пишем логику по авторизации
+const authFormHandler = e => {
+    e.preventDefault();
+
+    // получим значения 
+    const email = e.target.querySelector('#email').value;
+    const password = e.target.querySelector('#password').value;
+
+    console.log(email, password);
+}
+
+
 // *** Обработчики
 
 // отправка формы
@@ -46,5 +70,8 @@ input.addEventListener('input', () => {
 
 // Рендер наших вопросов после перезгарузки страницы
 window.addEventListener('load', Question.renderList);
+
+// Открытие модального окна
+modalBtn.addEventListener('click', openModal)
 
 
