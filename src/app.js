@@ -1,6 +1,6 @@
 import {Question} from './question'
 import {isValid, createModal} from './utils'
-import {getAuthForm} from './auth'
+import {getAuthForm, authWidthEmailAndPassword} from './auth'
 import './styles.css'
 
 // *** Константы
@@ -50,11 +50,26 @@ const openModal = () => {
 const authFormHandler = e => {
     e.preventDefault();
 
-    // получим значения 
+    // получим значения
+    const btn = e.target.querySelector('button')
     const email = e.target.querySelector('#email').value;
     const password = e.target.querySelector('#password').value;
 
-    console.log(email, password);
+    btn.disabled = true;
+    authWidthEmailAndPassword(email, password)
+        .then(token => {
+            return Question.fetch(token)
+        })
+        .then(renderModalAfterAuth)
+        .then(() => btn.disabled = false)
+}
+
+const renderModalAfterAuth = content => {
+    if(typeof content === 'string') {
+        createModal('Ошибка', content)
+    } else {
+        createModal('Список вопросов', Question.listToHTML(content))
+    }
 }
 
 
